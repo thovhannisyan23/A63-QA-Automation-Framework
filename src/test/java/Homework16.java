@@ -11,13 +11,8 @@ import java.time.Duration;
 public class Homework16 extends BaseTest {
     @Test
 
-    public void RegistrationNavigation() {
-
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
-
-        WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+    public void RegistrationNavigation() throws InterruptedException {
+        navigateToURL();
 
         String url = "https://qa.koel.app/";
         driver.get(url);
