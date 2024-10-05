@@ -95,5 +95,14 @@ public class BaseTest {
         return popup.getText();
     }
 
+    public void clickNextSongBtn() {
+
+        WebElement nextSong1 = driver.findElement(By.cssSelector("i[data-testid=\"play-next-btn\"]"));
+        nextSong1.click();   }
+    public void clickPlayBtn() {
+
+        WebElement playBtn = driver.findElement(By.cssSelector("[data-testid=\"play-btn\"]"));
+        playBtn.click();   }
+
 
 }
