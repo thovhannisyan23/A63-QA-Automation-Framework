@@ -13,21 +13,24 @@ import java.util.UUID;
 public class BaseTest {
 
     public WebDriver driver;
-    public String url = "https://qa.koel.app/";
+    public String url ;
 
     @BeforeSuite
     static void setupClass() {
         WebDriverManager.chromedriver().setup();
     }
     @BeforeMethod
-    public void lunchClass() throws InterruptedException {
+    @Parameters({"BaseURL"})
+    public void lunchClass(String BaseURL) throws InterruptedException {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
 
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        url = BaseURL;
         navigateToURL();
     }
+
    @AfterMethod
    public void closeBrowser() {
         driver.quit();
@@ -53,7 +56,6 @@ public class BaseTest {
         Thread.sleep(2000);
 
     }
-
 
     public void searchForSong(String songName) throws InterruptedException {
         WebElement searchField = driver.findElement(By.cssSelector("input[type='search']"));
@@ -95,6 +97,14 @@ public class BaseTest {
         return popup.getText();
     }
 
+    public String returnDeleteMessage(){
+
+        WebElement popup = driver.findElement(By.cssSelector("p.msg"));
+        return popup.getText();
+    }
+
+
+
     public void clickNextSongBtn() {
 
         WebElement nextSong1 = driver.findElement(By.cssSelector("i[data-testid=\"play-next-btn\"]"));
@@ -103,6 +113,12 @@ public class BaseTest {
 
         WebElement playBtn = driver.findElement(By.cssSelector("[data-testid=\"play-btn\"]"));
         playBtn.click();   }
-
+    public void clickOnPlaylist() throws InterruptedException {
+        WebElement playlistFind = driver.findElement(By.cssSelector("[href='#!/playlist/99457']"));
+        playlistFind.click();
+        WebElement deletePlaylist = driver.findElement(By.cssSelector(".del"));
+        deletePlaylist.click();
+        Thread.sleep(2000);
+    }
 
 }
