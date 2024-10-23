@@ -23,7 +23,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 
-public class BaseTest {
+public class BaseTestOld {
 
     public static  WebDriver driver;
     public static String url ;
@@ -42,8 +42,8 @@ public class BaseTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
 
-      //driver = new ChromeDriver(options);
-       driver = pickBrowser(System.getProperty("browser"));
+        //driver = new ChromeDriver(options);
+        driver = pickBrowser(System.getProperty("browser"));
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
 
@@ -54,11 +54,10 @@ public class BaseTest {
     }
 
 
-   @AfterMethod
-   public void closeBrowser() {
+    @AfterMethod
+    public void closeBrowser() {
         driver.quit();
-   }
-
+    }
 
 
     public void navigateToURL()  {
@@ -67,21 +66,21 @@ public class BaseTest {
 
 
     public static WebDriver pickBrowser(String browser) throws MalformedURLException{
-       DesiredCapabilities caps = new DesiredCapabilities();
+        DesiredCapabilities caps = new DesiredCapabilities();
         String gridURL = "http://192.168.0.158:4444";
 
         switch (browser){
             case "firefox" :
                 WebDriverManager.firefoxdriver().setup();
-               FirefoxOptions firefoxOptions = new FirefoxOptions();
-               firefoxOptions.addArguments("--remote-allow-origins=*");
+                //     FirefoxOptions firefoxOptions = new FirefoxOptions();
+                //     firefoxOptions.addArguments("--remote-allow-origins=*");
                 return driver = new FirefoxDriver();
             case "MicrosoftEdge":
                 WebDriverManager.edgedriver().setup();
                 EdgeOptions edgeOptions = new EdgeOptions();
                 edgeOptions.addArguments("--remote-allow-origins=*");
                 return driver = new EdgeDriver();
-          case "grid-edge":
+            case "grid-edge":
                 caps.setCapability("browserName","MicrosoftEdge");
                 return driver = new RemoteWebDriver(URI.create(gridURL).toURL(), caps);
             case "grid-firefox":
@@ -92,6 +91,7 @@ public class BaseTest {
                 return driver = new RemoteWebDriver(URI.create(gridURL).toURL(), caps);
             default:
                 WebDriverManager.chromedriver().setup();
+
                 return driver = new ChromeDriver();
         }
 
@@ -109,6 +109,25 @@ public class BaseTest {
         passwordField.sendKeys(password);
 
     }
+
+    public void searchForSong(String songName) throws InterruptedException {
+        WebElement searchField = driver.findElement(By.cssSelector("input[type='search']"));
+        searchField.clear();
+        searchField.sendKeys(songName);
+        WebElement viewAllField = driver.findElement(By.cssSelector("button[data-test='view-all-songs-btn']"));
+        viewAllField.click();
+        Thread.sleep(2000);
+
+    }
+
+    public void clickOnFirstSongToAdd() throws InterruptedException {
+        WebElement firstSong = driver.findElement(By.cssSelector("#songResultsWrapper > div > div > div.item-container > table > tr > td.title"));
+        firstSong.click();
+        WebElement addTo = driver.findElement(By.cssSelector(".btn-add-to"));
+        addTo.click();
+        Thread.sleep(2000);
+    }
+
 
     public void clickSubmit() {
         wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']"))).click();
@@ -165,7 +184,7 @@ public class BaseTest {
         playlistInput.sendKeys(newPlaylistName);
         playlistInput.sendKeys(Keys.ENTER);
 
-            }
+    }
 
     public String returnPlaylistName(){
         WebElement playlistName = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[href='#!/playlist/99457']")));
