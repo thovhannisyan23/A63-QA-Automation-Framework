@@ -17,6 +17,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.*;
 
+
+
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.time.Duration;
@@ -41,6 +44,8 @@ public class BaseTest {
     public void lunchClass(String BaseURL) throws MalformedURLException {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
       //driver = new ChromeDriver(options);
        driver = pickBrowser(System.getProperty("browser"));
@@ -73,14 +78,14 @@ public class BaseTest {
         switch (browser){
             case "firefox" :
                 WebDriverManager.firefoxdriver().setup();
-               FirefoxOptions firefoxOptions = new FirefoxOptions();
-               firefoxOptions.addArguments("--remote-allow-origins=*");
-                return driver = new FirefoxDriver();
+                driver = new FirefoxDriver();
+                return driver ;
             case "MicrosoftEdge":
                 WebDriverManager.edgedriver().setup();
                 EdgeOptions edgeOptions = new EdgeOptions();
                 edgeOptions.addArguments("--remote-allow-origins=*");
-                return driver = new EdgeDriver();
+                driver = new EdgeDriver(edgeOptions);
+                return driver ;
           case "grid-edge":
                 caps.setCapability("browserName","MicrosoftEdge");
                 return driver = new RemoteWebDriver(URI.create(gridURL).toURL(), caps);
@@ -92,7 +97,10 @@ public class BaseTest {
                 return driver = new RemoteWebDriver(URI.create(gridURL).toURL(), caps);
             default:
                 WebDriverManager.chromedriver().setup();
-                return driver = new ChromeDriver();
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--remote-allow-origins=*");
+                driver = new ChromeDriver(options);
+                return driver ;
         }
 
     }
