@@ -7,7 +7,9 @@ public class Homework23 extends BaseTest{
 
     @Test
     public void renamePlaylistF(){
+
         String newPlaylistName = "Edited Playlist Name3";
+
 
         LoginPage loginPage = new LoginPage(driver);
         HomePage homePage = new HomePage(driver);
