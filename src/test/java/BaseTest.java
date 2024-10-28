@@ -22,8 +22,12 @@ import org.testng.annotations.*;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.UUID;
+
+import static java.sql.DriverManager.getDriver;
 
 
 public class BaseTest {
@@ -33,6 +37,7 @@ public class BaseTest {
     public static WebDriverWait wait ;
     public static Actions actions ;
     String newPlaylistName = "New Name";
+    private static final ThreadLocal<WebDriver> threadDriver = new ThreadLocal<>();
 
     @BeforeSuite
     static void setupClass() {
@@ -41,6 +46,36 @@ public class BaseTest {
     @BeforeMethod
 
     @Parameters({"BaseURL"})
+    public void setupBrowser(String BaseURL) throws MalformedURLException{
+        threadDriver.set(pickBrowser(System.getProperty("browser")));
+        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        url = BaseURL;
+        navigateToURL();
+
+    }
+
+    public static WebDriver getDriver(){
+        return threadDriver.get();
+    }
+    public static WebDriver lambdaTest() throws MalformedURLException{
+
+        String hubURL = "https://hub.lambdatest.com/wd/hub";
+
+        ChromeOptions browserOptions = new ChromeOptions();
+        browserOptions.setPlatformName("Windows 10");
+        browserOptions.setBrowserVersion("129");
+        HashMap<String, Object> ltOptions = new HashMap<String, Object>();
+        ltOptions.put("username", "thovhannisyan23");
+        ltOptions.put("accessKey", "Im34u6l0FURoQmENu6sr1BzI6CrKWxwOV7AYKlMwbN5BkkGyFU");
+        ltOptions.put("build", "TestBuild");
+        ltOptions.put("project", "THProject");
+        ltOptions.put("selenium_version", "4.0.0");
+        ltOptions.put("w3c", true);
+        browserOptions.setCapability("LT:Options", ltOptions);
+
+        return new RemoteWebDriver(new URL(hubURL), browserOptions);
+    }
+
     public void lunchClass(String BaseURL) throws MalformedURLException {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
@@ -62,6 +97,11 @@ public class BaseTest {
    @AfterMethod
    public void closeBrowser() {
         driver.quit();
+   }
+
+   public void tearDown(){
+        threadDriver.get().close();
+        threadDriver.remove();
    }
 
 
@@ -95,6 +135,8 @@ public class BaseTest {
             case "grid-chrome":
                 caps.setCapability("browserName","chrome");
                 return driver = new RemoteWebDriver(URI.create(gridURL).toURL(), caps);
+            case "cloud":
+               return lambdaTest();
             default:
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
