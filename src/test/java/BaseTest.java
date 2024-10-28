@@ -16,10 +16,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.*;
-
-
-
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -50,13 +46,14 @@ public class BaseTest {
         threadDriver.set(pickBrowser(System.getProperty("browser")));
         getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         url = BaseURL;
-        navigateToURL();
-
+      //  navigateToURL();
+        getDriver().get(url);
     }
 
     public static WebDriver getDriver(){
         return threadDriver.get();
     }
+
     public static WebDriver lambdaTest() throws MalformedURLException{
 
         String hubURL = "https://hub.lambdatest.com/wd/hub";
@@ -90,14 +87,15 @@ public class BaseTest {
         actions = new Actions(driver);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         url = BaseURL;
-        navigateToURL();
+
+        //navigateToURL();
     }
 
 
    @AfterMethod
-   public void closeBrowser() {
+   /*public void closeBrowser() {
         driver.quit();
-   }
+   }*/
 
    public void tearDown(){
         threadDriver.get().close();
@@ -107,6 +105,7 @@ public class BaseTest {
 
 
     public void navigateToURL()  {
+
         driver.get(url);
     }
 
@@ -145,6 +144,16 @@ public class BaseTest {
                 return driver ;
         }
 
+    }
+    public String returnPlaylistName(){
+        WebElement playlistName = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[href='#!/playlist/99457']")));
+        return playlistName.getText();
+    }
+    public void enterNewName(){
+        WebElement playlistInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name='name']")));
+        playlistInput.sendKeys(Keys.CONTROL, "A", Keys.BACK_SPACE);
+        playlistInput.sendKeys(newPlaylistName);
+        playlistInput.sendKeys(Keys.ENTER);
     }
 
     public void provideEmail(String email)  {
@@ -197,28 +206,12 @@ public class BaseTest {
     public void clickOnPlaylist()  {
         wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[href='#!/playlist/99457']"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".del"))).click();
-
     }
 
     public void doubleClickPlaylist() {
-
-
         WebElement playlist = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[href='#!/playlist/99457']")));
         actions.doubleClick(playlist).perform();
-
-
     }
-    public void enterNewName(){
 
-        WebElement playlistInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name='name']")));
-        playlistInput.sendKeys(Keys.CONTROL, "A", Keys.BACK_SPACE);
-        playlistInput.sendKeys(newPlaylistName);
-        playlistInput.sendKeys(Keys.ENTER);
 
-            }
-
-    public String returnPlaylistName(){
-        WebElement playlistName = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[href='#!/playlist/99457']")));
-        return playlistName.getText();
-    }
 }
